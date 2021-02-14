@@ -51,7 +51,7 @@ class UserRegisterEmailView(generics.CreateAPIView):
                 else:
                     user = User.register_user(email, password)
                 user.send_email_confirm(request)
-                return responses.SuccessResponse({}).send()
+                return responses.SuccessResponse({}, status=201).send()
         except (authnz_exceptions.CustomException, exceptions.ValidationError) as e:
             return responses.ErrorResponse(message=e.detail, status=e.status_code).send()
 

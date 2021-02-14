@@ -1,9 +1,12 @@
+import re
+
+from django.core import mail
 from django.test import TestCase
 
 from authnz.models import User
 
 
-class AnimalTestCase(TestCase):
+class UserTestCase(TestCase):
 
     def test_user_model_methods(self):
         """
@@ -26,3 +29,34 @@ class AnimalTestCase(TestCase):
         user.confirm_email()
         self.assertEqual(user.email_confirmed, True, 'Wrong email confirmed')
 
+    def test_user_register_login_refresh_token(self):
+        data = {
+            'email': 'saeed@test.com',
+            'password': '123456'
+        }
+        resp = self.client.post('/authnz/register_email/', data=data, content_type='application/json')
+        self.assertEqual(resp.status_code, 201, 'Wrong status code')
+        self.assertEqual(len(mail.outbox), 1, 'Email sending problem')
+        self.assertEqual(mail.outbox[0].to, [data['email']], 'Email sending problem')
+        self.assertEqual(mail.outbox[0].subject, 'Confirm your email', 'Wrong email subject')
+
+        link = re.findall(
+            'http://testserver/authnz/approve_email/[0-9A-Za-z_\-\']+/[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,32}/',
+            mail.outbox[0].alternatives[0][0]
+        )
+        self.assertEqual(len([link]), 1, 'Wrong email confirmation link')
+
+        resp = self.client.get(link[0])
+        self.assertEqual(resp.status_code, 200, 'Wrong status code')
+
+        resp = self.client.get(link[0])
+        self.assertEqual(resp.status_code, 400, 'Wrong status code')
+
+        resp = self.client.post('/authnz/login_email/', data=data, content_type='application/json')
+        self.assertEqual(resp.status_code, 200, 'Wrong status code')
+        self.assertIsInstance(resp.json(), dict, 'Wrong response type')
+
+        headers = {'HTTP_AUTHORIZATION': f'JWT {resp.json()["data"]["token"]}'}
+        resp = self.client.post('/authnz/login_email/', data=data, content_type='application/json', **headers)
+        self.assertEqual(resp.status_code, 200, 'Wrong status code')
+        self.assertIsInstance(resp.json(), dict, 'Wrong response type')
