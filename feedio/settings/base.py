@@ -24,6 +24,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_yasg',
     # our apps
+    'authnz',
+    'feed',
+    'utils',
 ]
 
 MIDDLEWARE = [
@@ -55,7 +58,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'hivest.wsgi.application'
+WSGI_APPLICATION = 'feedio.wsgi.application'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -87,8 +90,9 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
+AUTH_USER_MODEL = 'authnz.User'  # Changed user of django system
 
 JWT_AUTH = {
     'JWT_VERIFY': True,

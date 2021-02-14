@@ -15,9 +15,9 @@ ALLOWED_HOSTS = ['*']
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'hivedb',
-        'USER': 'hivend',
-        'PASSWORD': 'hivendpass',
+        'NAME': 'feediodb',
+        'USER': 'feedio',
+        'PASSWORD': 'feediopass',
         'HOST': 'localhost',
         'PORT': ''
     }

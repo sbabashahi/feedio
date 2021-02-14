@@ -25,7 +25,7 @@ def jwt_get_secret_key(user):
     return user.jwt_secret
 
 
-def jwt_response_payload_handler(token, user):
+def jwt_response_payload_handler(token):
     """
     Returns the response data for both the login and refresh views.
     Override to return a custom response such as including the
@@ -33,10 +33,7 @@ def jwt_response_payload_handler(token, user):
 
     """
     data = {
-        'token': token,
-        'user': {
-            'is_provider': user.is_provider,
-        }
+        'token': token
     }
     return data
 
@@ -49,4 +46,4 @@ def pagination_util(request):
     except ValueError:
         raise exceptions.CustomException(detail=ugettext('Size and index query param for pagination must be integer.'))
     size = index + size
-    return index, size, args
+    return index, size, arguments
