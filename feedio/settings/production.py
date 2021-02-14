@@ -11,20 +11,12 @@ DEBUG = False
 
 ALLOWED_HOSTS = []
 
-# Database
-# https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-# DB_PASSWORD = '2YY6gAvUA8UbIfy94y5QCxTY'
-DB_PASSWORD = os.environ.get('DB_PASSWORD', None)
-
-if not DB_PASSWORD:
-    raise Exception('Add DB_PASSWORD env variable, example: export DB_PASSWORD=123456')
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'feedio',
         'USER': 'feediodb',
-        'PASSWORD': DB_PASSWORD,
+        'PASSWORD': 'feediopass',
         'HOST': 'localhost',
         'PORT': ''
     }

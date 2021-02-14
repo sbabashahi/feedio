@@ -1,0 +1,81 @@
+version: '3.4'
+
+services:
+
+  redis:
+    container_name: redis
+    hostname: redis
+    image: redis:latest
+    networks:
+      - main
+    ports:
+      - "6379:6379"
+    restart: on-failure
+
+  postgres:
+    container_name: postgres
+    hostname: postgres
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=feedio
+      - POSTGRES_PASSWORD=feediopass
+      - POSTGRES_DB=feediodb
+    networks:
+      - main
+    ports:
+      - "5432:5432"
+    restart: on-failure
+    volumes:
+      - postgresql-data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    command: sh -c "python manage.py collectstatic --no-input && python manage.py migrate && gunicorn feedio.wsgi -b 0.0.0.0:8000"
+    container_name: app
+    depends_on:
+      - postgres
+      - redis
+    expose:
+      - "8000"
+    hostname: app
+    image: app-image
+    networks:
+      - main
+    restart: on-failure
+
+  celery_worker:
+    command: sh -c "celery -A feedio worker -l info --statedb=./celery -A feedio worker -l info --statedb"
+    container_name: celery_worker
+    depends_on:
+      - app
+      - postgres
+      - redis
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+    hostname: celery_worker
+    image: app-image
+    networks:
+      - main
+    restart: on-failure
+
+  celery_beat:
+    command: sh -c "celery -A feedio worker -B -s ./celery/celerybeat-schedule -n celeary_beat"
+    container_name: celery_beat
+    depends_on:
+      - app
+      - postgres
+      - redis
+      - celery_worker
+    hostname: celery_beat
+    image: app-image
+    networks:
+      - main
+    restart: on-failure
+
+networks:
+  main:
+
+volumes:
+  postgresql-data:
