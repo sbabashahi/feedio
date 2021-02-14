@@ -32,11 +32,11 @@ def check_perm_owner_update(request, instance):
     if hasattr(instance, 'user') and instance.user == request.user:
         return True
     elif hasattr(instance, 'user'):
-        raise CustomException(detail=_('No Permission to update'), code=403)
+        raise CustomException(detail=ugettext('No Permission to update'), code=403)
     elif request.user.is_superuser:
         return True
     else:
-        raise CustomException(detail=_('No Permission to update'), code=403)
+        raise CustomException(detail=ugettext('No Permission to update'), code=403)
 
 
 def check_delete_permission(request, instance):
@@ -45,4 +45,4 @@ def check_delete_permission(request, instance):
     elif hasattr(instance, 'user') and instance.user == request.user:
         return True
     else:
-        raise CustomException(detail=_('No Permission to delete'), code=403)
+        raise CustomException(detail=ugettext('No Permission to delete'), code=403)

@@ -16,8 +16,8 @@ urlpatterns = [
     path('feed/feed/<int:id>/', feed_views.FeedDeleteView.as_view()),
     path('feed/feed/<int:id>/', feed_views.FeedRetrieveView.as_view()),
     path('feed/favorite_feed/<int:id>/', feed_views.FeedFavoriteView.as_view()),
+    path('feed/comment_list/<int:id>/', feed_views.CommentListFeedView.as_view()),
     path('comment/comment/', feed_views.CommentCreateView.as_view()),
     path('comment/comment/<int:id>/', feed_views.CommentView.as_view()),
-    path('comment/comment_list/<int:id>/', feed_views.CommentListFeedView.as_view()),
-
 ]
+

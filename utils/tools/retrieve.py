@@ -10,6 +10,8 @@ class RetrieveView(generics.RetrieveAPIView):
         try:
             if id is None and self.model == User:
                 instance = request.user
+            elif hasattr(self.model, 'is_deleted'):
+                instance = self.model.objects.get(id=id, is_deleted=False)
             else:
                 instance = self.model.objects.get(id=id)
             serialize_data = self.get_serializer(instance)

@@ -8,8 +8,6 @@ services:
     image: redis:latest
     networks:
       - main
-    ports:
-      - "6379:6379"
     restart: on-failure
 
   postgres:
@@ -22,8 +20,6 @@ services:
       - POSTGRES_DB=feediodb
     networks:
       - main
-    ports:
-      - "5432:5432"
     restart: on-failure
     volumes:
       - postgresql-data:/var/lib/postgresql/data
@@ -32,11 +28,14 @@ services:
     build: .
     command: sh -c "python manage.py collectstatic --no-input && python manage.py migrate && gunicorn feedio.wsgi -b 0.0.0.0:8000"
     container_name: app
+    environment:
+      - SECRET_KEY=supersecretkey
+      - DJANGO_SETTINGS_MODULE=feedio.settings.production
     depends_on:
       - postgres
       - redis
-    expose:
-      - "8000"
+    ports:
+      - "8000:8000"
     hostname: app
     image: app-image
     networks:
@@ -44,12 +43,15 @@ services:
     restart: on-failure
 
   celery_worker:
-    command: sh -c "celery -A feedio worker -l info --statedb=./celery -A feedio worker -l info --statedb"
+    command: sh -c "celery -A feedio worker -l info --statedb=./celery/worker.state"
     container_name: celery_worker
     depends_on:
       - app
       - postgres
       - redis
+    environment:
+      - SECRET_KEY=supersecretkey
+      - DJANGO_SETTINGS_MODULE=feedio.settings.production
     deploy:
       replicas: 2
       restart_policy:
@@ -68,6 +70,9 @@ services:
       - postgres
       - redis
       - celery_worker
+    environment:
+      - SECRET_KEY=supersecretkey
+      - DJANGO_SETTINGS_MODULE=feedio.settings.production
     hostname: celery_beat
     image: app-image
     networks:

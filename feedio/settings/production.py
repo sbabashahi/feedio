@@ -14,11 +14,21 @@ ALLOWED_HOSTS = []
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'feedio',
-        'USER': 'feediodb',
+        'NAME': 'feediodb',
+        'USER': 'feedio',
         'PASSWORD': 'feediopass',
-        'HOST': 'localhost',
+        'HOST': 'postgres',
         'PORT': ''
+    }
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://redis/0',  # over http
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        },
     }
 }
 

@@ -284,7 +284,7 @@ class FeedFavoriteView(generics.GenericAPIView):
         try:
             feed = self.model.objects.get(id=id, is_deleted=False)
             feed.favorites.add(request.user)
-            return responses.SuccessResponse(status=200).send()
+            return responses.SuccessResponse(status=201).send()
         except (exceptions.CustomException, self.model.DoesNotExist) as e:
             return responses.ErrorResponse(message=e.detail, status=e.status_code).send()
 

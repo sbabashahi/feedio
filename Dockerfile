@@ -1,7 +1,7 @@
-FROM python:3.8-alpine
+FROM python:3.8-buster
 
 MAINTAINER Saeed
-LABEL name="Ubuntu Python3 server"
+LABEL name="Feedio server"
 
 RUN mkdir /usr/src/app/
 
@@ -9,7 +9,7 @@ WORKDIR /usr/src/app/
 COPY . .
 
 RUN pip install -r requirements.txt
-RUN ["chmod", "+x", "/docker-entrypoint.sh"]
+RUN ["chmod", "+x", "/usr/src/app/docker-entrypoint.sh"]
 
 EXPOSE 8000
 

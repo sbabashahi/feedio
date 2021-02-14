@@ -122,16 +122,6 @@ REST_FRAMEWORK = {
     'ALLOWED_VERSIONS': ('1.0', ),
 }
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://127.0.0.1:6379/0',  # over http
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-        },
-    }
-}
-
 PASSWORD_RESET_TIMEOUT_DAYS = 7  # used in email links, used by django token generator
 
 EMAILS_LIST = {'support': 'Feedio<support@feed.io>'}

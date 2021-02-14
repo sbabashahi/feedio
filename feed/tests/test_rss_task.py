@@ -71,8 +71,9 @@ class RssTestCase(TestCase):
         }
         rss_zoomit = Rss(**data_zoomit)
         rss_zoomit.save()
-        with patch('utils.tasks.check_rss_every_hour.retry', check_rss_every_hour):
-            with patch('utils.tasks.scrap_rss', side_effect=scrap):
-                check_rss_every_hour()
-                self.assertEqual(Feed.objects.count(), 1, 'Wrong number of feeds')
+        with patch('utils.tasks.check_rss_every_hour.retry', side_effect=check_rss_every_hour):
+            with patch('utils.tasks.check_rss_every_hour.retry', side_effect=check_rss_every_hour):
+                with patch('utils.tasks.scrap_rss', side_effect=scrap):
+                    check_rss_every_hour()
+                    self.assertEqual(Feed.objects.count(), 1, 'Wrong number of feeds')
 
