@@ -4,10 +4,10 @@ from requests.exceptions import RequestException
 from feed.models import Rss, Feed
 from scrapper.scraping import scrap_rss
 
-app = Celery()
+app = Celery()  # TODO
 
 
-@app.task(autoretry_for=(RequestException,), retry_backoff=True, retry_kwargs={'max_retries': 7, 'countdown': 5})
+@app.task(autoretry_for=(RequestException,), retry_kwargs={'max_retries': 3, 'countdown': 5}, retry_backoff=True)
 def check_rss_every_hour():
     for rss in Rss.objects.filter(is_active=True):
         last_time = rss.feed_set.first()
@@ -17,6 +17,7 @@ def check_rss_every_hour():
             feed['rss'] = rss
             feed_item = Feed(**feed)
             feed_item.save()
+
 
 
 @shared_task

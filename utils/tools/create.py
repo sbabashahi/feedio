@@ -14,7 +14,7 @@ class CreateView(generics.CreateAPIView):
             serialize_data = self.get_serializer(data=request.data)
             if serialize_data.is_valid(raise_exception=True):
                 self.perform_create(serialize_data)
-                return responses.SuccessResponse(serialize_data.data).send()
+                return responses.SuccessResponse(serialize_data.data, status=201).send()
         except IntegrityError as e:
             return responses.ErrorResponse(message=ugettext('DB Integrity Error in creation '),
                                            dev_error=str(e), status=409).send()

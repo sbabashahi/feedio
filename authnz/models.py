@@ -9,6 +9,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.utils import timezone
 from django.utils.translation import ugettext
+from rest_framework_jwt.utils import jwt_payload_handler, jwt_encode_handler
 
 from utils import permissions, utils
 
@@ -71,3 +72,7 @@ class User(AbstractUser):
         user.set_password(password)
         user.save()
         return user
+
+    def generate_token(self):
+        payload = jwt_payload_handler(self)
+        return jwt_encode_handler(payload)

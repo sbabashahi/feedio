@@ -4,7 +4,6 @@ from django.utils.translation import ugettext
 from rest_framework import decorators, exceptions, generics, serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
-from rest_framework_jwt.utils import jwt_payload_handler, jwt_encode_handler
 
 from authnz import serializers as authnz_serializers
 from authnz.models import User, email_activation_token
@@ -83,8 +82,7 @@ class UserLoginEmailView(generics.CreateAPIView):
                     raise authnz_exceptions.CustomException(detail=ugettext('You did not registered before.'))
                 if user.email_confirmed and user.is_active and user.check_password(password):
                     user.save_last_login()
-                    payload = jwt_payload_handler(user)  # todo: Is deprecated
-                    jwt_token = utils.jwt_response_payload_handler(jwt_encode_handler(payload))
+                    jwt_token = utils.jwt_response_payload_handler(user.generate_token())
                     return responses.SuccessResponse(jwt_token).send()
                 elif not user.email_confirmed:
                     try:
@@ -117,8 +115,7 @@ class UserRefreshTokenView(generics.RetrieveAPIView):
     def get(self, request):
         try:
             if request.user.is_active:
-                payload = jwt_payload_handler(request.user)  # todo: Is deprecated
-                jwt_token = utils.jwt_response_payload_handler(jwt_encode_handler(payload))
+                jwt_token = utils.jwt_response_payload_handler(user.generate_token())
                 return responses.SuccessResponse(jwt_token).send()
             else:
                 raise authnz_exceptions.CustomException(detail=_('This user is inactive, contact us.'))

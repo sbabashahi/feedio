@@ -13,7 +13,7 @@ app.conf.beat_schedule = {
     # Executes every day at  12:30 pm.
     'run-every-hour': {
         'task': 'utils.tasks.check_rss_every_hour',
-        'schedule': crontab(hour='*/1', minute='*/5'),
+        'schedule': crontab(hour='*/1', minute=0),
         'args': (),
     },
 }

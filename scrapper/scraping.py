@@ -1,5 +1,6 @@
-import requests  # pulling data
-from bs4 import BeautifulSoup  # xml parsing
+import requests
+from bs4 import BeautifulSoup
+from celery.utils.log import get_task_logger
 from dateutil.parser import parse
 
 
@@ -26,15 +27,9 @@ def scrap_rss(url: str, last_time)->dict:
 
             article_list.append(article)
         return article_list
+    except requests.exceptions.RequestException as e:
+        raise requests.exceptions.RequestException
     except Exception as e:
-        print('The scraping job failed. See exception:')
-        print(e)
+        logger = get_task_logger(__name__)
+        logger.error(str(e))
         return []
-
-
-# print('Starting scraping')
-# # hackernews_rss('https://www.varzesh3.com/rss/all')
-# # hackernews_rss('https://www.isna.ir/rss')
-# # hackernews_rss('https://digiato.com/feed/')
-# hackernews_rss('https://www.zoomit.ir/feed/')
-# print('Finished scraping')
