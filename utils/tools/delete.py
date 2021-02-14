@@ -1,11 +1,7 @@
 from django.utils.translation import ugettext as _
 from rest_framework import generics
 
-from feed.models import Comment, Feed
 from utils import exceptions, responses, permissions
-
-
-MODELS_HAVE_IS_DELETED = [Comment, Feed]
 
 
 class DeleteView(generics.DestroyAPIView):
@@ -14,7 +10,10 @@ class DeleteView(generics.DestroyAPIView):
     """
     def delete(self, request, id):
         try:
-            instance = self.model.objects.get(id=id)
+            if hasattr(self.model, 'is_deleted'):
+                instance = self.model.objects.get(id=id, is_deleted=False)
+            else:
+                instance = self.model.objects.get(id=id)
             permissions.check_delete_permission(request, instance)
             if self.model in MODELS_HAVE_IS_DELETED:
                 instance.is_deleted = True
