@@ -52,5 +52,4 @@ feeds via a simple API.
     
     check_rss_every_hour -> every hour it would be run with use of celery beat and try to get lastest feeds
      from all active Rss 
-     
-    ![Alt text](https://github.com/sbabashahi/feedio/blob/master/hourly_task.png?raw=true)
+
