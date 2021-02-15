@@ -115,10 +115,10 @@ class UserRefreshTokenView(generics.RetrieveAPIView):
     def get(self, request):
         try:
             if request.user.is_active:
-                jwt_token = utils.jwt_response_payload_handler(user.generate_token())
+                jwt_token = utils.jwt_response_payload_handler(request.user.generate_token())
                 return responses.SuccessResponse(jwt_token).send()
             else:
-                raise authnz_exceptions.CustomException(detail=_('This user is inactive, contact us.'))
+                raise authnz_exceptions.CustomException(detail=ugettext('This user is inactive, contact us.'))
 
         except authnz_exceptions.CustomException as e:
             return responses.ErrorResponse(message=e.detail, status=e.status_code).send()

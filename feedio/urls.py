@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import admin
 from django.urls import path, re_path, include
 from rest_framework import permissions
@@ -10,12 +11,13 @@ from utils import urls as utils_urls
 
 
 schema_view = get_schema_view(
-   openapi.Info(
-      title="Feedio API",
-      default_version='v1'
-   ),
-   public=True,
-   permission_classes=(permissions.AllowAny,),
+    openapi.Info(
+        title="Feedio API",
+        default_version='v1'
+    ),
+    url='http://localhost:8008' if not settings.DEBUG else None,
+    public=True,
+    permission_classes=(permissions.AllowAny,),
 )
 
 
@@ -26,3 +28,7 @@ urlpatterns = [
     path('', include(feed_urls)),
     path('', include(utils_urls)),
 ]
+
+
+handler404 = 'utils.responses.handler404'
+handler500 = 'utils.responses.handler500'

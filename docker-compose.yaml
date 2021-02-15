@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.7'
 
 services:
 
@@ -34,13 +34,15 @@ services:
     depends_on:
       - postgres
       - redis
-    ports:
-      - "8000:8000"
+    expose:
+      - 8000
     hostname: app
     image: app-image
     networks:
       - main
     restart: on-failure
+    volumes:
+    - ./static/:/app/static/
 
   celery_worker:
     command: sh -c "celery -A feedio worker -l info --statedb=./celery/worker.state"
@@ -79,8 +81,22 @@ services:
       - main
     restart: on-failure
 
+  nginx:
+    build: ./nginx
+    volumes:
+      - ./static/:/static
+    ports:
+      - 8008:80
+    depends_on:
+      - app
+    networks:
+      - main
+    restart: on-failure
+
+
 networks:
   main:
 
 volumes:
   postgresql-data:
+  static_volume:

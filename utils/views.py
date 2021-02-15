@@ -1,3 +1,4 @@
+from django.db.utils import IntegrityError
 from rest_framework import decorators, exceptions, generics, serializers
 
 from authnz.models import User
@@ -55,5 +56,7 @@ class CreateDataTestView(generics.CreateAPIView):
             tasks.check_new_rss.apply_async(args=(isna_rss.id,), retry=False)
 
             return responses.SuccessResponse({}, status=201).send()
+        except IntegrityError as e:
+            return responses.ErrorResponse(message=str(e), status=400).send()
         except (authnz_exceptions.CustomException, exceptions.ValidationError) as e:
             return responses.ErrorResponse(message=e.detail, status=e.status_code).send()

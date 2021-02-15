@@ -3,27 +3,54 @@ This is a test Project with python3.8, Django, DRF, Postgresql, Redis, Celery an
 The idea is to create a simple RSS scraper which saves RSS feeds to a database and lets a user view and manage his 
 feeds via a simple API.
 
-We have a swagger endpoint.
+### Run it with docker
 
+    docker-compose up
 
-# Create DB
+### We have a swagger endpoint:
+
+    http://localhost:8008/swagger/
+
+### For first use and creating initial data you can use:
+    
+    http://localhost:8008/utils_views/data_test/
+ 
+### Create DB If you want to use it without docker
     
     CREATE USER feedio WITH PASSWORD 'feediopass';
     ALTER USER feedio WITH SUPERUSER;
     CREATE DATABASE feediodb;
 
 
-# RSS Feed example
+### RSS Feed example
 
     https://www.varzesh3.com/rss/all
     https://www.isna.ir/rss
     https://digiato.com/feed/
     https://www.zoomit.ir/feed/
     
-# tests
+### Tests
+
+     We have some integration test.
 
     ./manage.py test
+
+
+### Authorization
+
+    JWT token used for authorization you can get it from /authnz/login_email/ with email & pass
+    also refresh your token from /authnz/refresh_my_token/
     
-    We have some integration test.
+    Add it to your request header like Authorization: JWT your-jwt-token
 
 
+### Async Tasks
+
+    We have 2 tasks using celery and celery beat.
+    
+    check_new_rss -> as soosn as new Rss create by API /rss/rss/ it would run in background to get feeds from that Rss
+    
+    check_rss_every_hour -> every hour it would be run with use of celery beat and try to get lastest feeds
+     from all active Rss 
+     
+    ![Alt text](hourly_task.png)

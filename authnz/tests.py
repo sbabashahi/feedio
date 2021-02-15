@@ -57,6 +57,6 @@ class UserTestCase(TestCase):
         self.assertIsInstance(resp.json(), dict, 'Wrong response type')
 
         headers = {'HTTP_AUTHORIZATION': f'JWT {resp.json()["data"]["token"]}'}
-        resp = self.client.post('/authnz/login_email/', data=data, content_type='application/json', **headers)
+        resp = self.client.get('/authnz/refresh_my_token/', **headers)
         self.assertEqual(resp.status_code, 200, 'Wrong status code')
         self.assertIsInstance(resp.json(), dict, 'Wrong response type')

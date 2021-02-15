@@ -19,7 +19,7 @@ class BaseResponse:
 
 
 class ErrorResponse(BaseResponse):
-    def __init__(self, message, dev_error=None,show_type=settings.MESSAGE_SHOW_TYPE['TOAST'], status=400):
+    def __init__(self, message, dev_error=None, show_type=settings.MESSAGE_SHOW_TYPE['TOAST'], status=400):
         self.message = message
         self.dev_error = dev_error
         self.show_type = show_type
