@@ -35,7 +35,7 @@ class RssSerializers(serializers.Serializer):
             instance.link = validated_data['link']
 
         if validated_data.get('is_active') and instance.is_active != validated_data['is_active']:
-            instance.link = validated_data['is_active']
+            instance.is_active = validated_data['is_active']
 
         instance.save()
         return instance

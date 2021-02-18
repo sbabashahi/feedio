@@ -17,15 +17,17 @@ class RssCreateView(create.CreateView):
     """
     post:
 
-        title min 3, max 50
+        Create Rss
 
-        link min 5, max 100
+            title min 3, max 50
 
-        example
+            link min 5, max 100
 
-            title   zoomit
+            example
 
-            link    https://www.zoomit.ir/feed/
+                title   zoomit
+
+                link    https://www.zoomit.ir/feed/
     """
     serializer_class = RssSerializers
     model = Rss
@@ -39,17 +41,17 @@ class RssListView(generics.ListAPIView):
 
         Get list of available rss
 
-        pagination with index and size
+            pagination with index and size
 
-        /?index=0&size=20
+            /?index=0&size=20
 
-        filter
+            filter
 
-            title
+                title
 
-            for staffs
+                for staffs
 
-                is_active  bool true or false blank for all
+                    is_active  bool true or false blank for all
     """
     serializer_class = RssSerializers
     model = Rss
@@ -77,25 +79,49 @@ class RssListView(generics.ListAPIView):
 @decorators.authentication_classes([JSONWebTokenAuthentication])
 @decorators.permission_classes([IsAuthenticated, permissions.SuperUserPermission])
 class RssUpdateView(update.UpdateView):
+    """
+    put:
+
+        Update Rss
+
+            title min 3, max 50
+
+            link min 5, max 100
+
+            is_active  bool
+
+    patch:
+
+        Update Rss
+
+            title min 3, max 50
+
+            link min 5, max 100
+
+            is_active  bool
+
+    """
     serializer_class = RssSerializers
     model = Rss
 
 
 @decorators.authentication_classes([JSONWebTokenAuthentication])
 @decorators.permission_classes([IsAuthenticated])
-class RsSFollowedListView(generics.ListAPIView):
+class RssFollowedListView(generics.ListAPIView):
     """
     get:
 
         Get my list of followed rss
 
-        pagination with index and size
+            pagination with index and size
 
-        /?index=0&size=20
+            /?index=0&size=20
 
-        filter
+            filter
 
-            title
+                title
+
+                    search on Rss title
 
     """
     serializer_class = RssSerializers
@@ -120,6 +146,16 @@ class RsSFollowedListView(generics.ListAPIView):
 @decorators.authentication_classes([JSONWebTokenAuthentication])
 @decorators.permission_classes([IsAuthenticated])
 class RssFollowView(generics.GenericAPIView):
+    """
+    post:
+
+        Follow rss
+
+    delete:
+
+        Unfollow rss
+
+    """
     serializer_class = serializers.Serializer
     model = Rss
 
@@ -149,22 +185,22 @@ class FeedListView(generics.ListAPIView):
 
         Get list of all feeds
 
-        pagination with index and size
+            pagination with index and size
 
-        /?index=0&size=20
+            /?index=0&size=20
 
-        filter
+            filter
 
-            search  search on title and description
+                search  search on title and description of feed
 
-        order_by
+            order_by
 
-            OLDEST
+                OLDEST
 
-            NEWEST default
+                NEWEST default
 
     """
-    serializer_class = FeedSerializers
+    serializer_class = FeedListSerializer
     model = Feed
 
     def get(self, request):
@@ -190,7 +226,9 @@ class RssFeedUnreadView(generics.ListAPIView):
     """
     get:
 
-        Get unread feeds on this rss if followed by user
+        Get unread feeds count on this rss if followed by user
+
+        Feed seen would update if user followed feed on feed list API
 
     """
     serializer_class = serializers.Serializer
@@ -220,19 +258,19 @@ class RssFeedListView(generics.ListAPIView):
 
         Get list of available feeds of rss
 
-        pagination with index and size
+            pagination with index and size
 
-        /?index=0&size=20
+            /?index=0&size=20
 
-        filter
+            filter
 
-            title
+                title
 
-        order_by
+            order_by
 
-            OLDEST
+                OLDEST
 
-            NEWEST default
+                NEWEST default
 
     """
     serializer_class = FeedListSerializer
@@ -244,6 +282,7 @@ class RssFeedListView(generics.ListAPIView):
             rss = Rss.objects.get(id=id, is_active=True)
             # Update last seen this rss
             FollowRss.objects.filter(rss=rss, user=request.user).update(last_seen=utils.now_time())
+
             filters = {
                 'rss': rss
             }
@@ -261,15 +300,17 @@ class RssFeedListView(generics.ListAPIView):
 
 
 @decorators.authentication_classes([JSONWebTokenAuthentication])
-@decorators.permission_classes([IsAuthenticated, permissions.SuperUserPermission])
-class FeedDeleteView(delete.DeleteView):
-    serializer_class = FeedSerializers
-    model = Feed
-
-
-@decorators.authentication_classes([JSONWebTokenAuthentication])
 @decorators.permission_classes([IsAuthenticated])
-class FeedRetrieveView(retrieve.RetrieveView):
+class FeedDeleteRetrieveView(retrieve.RetrieveView, delete.DeleteView):
+    """
+    get:
+
+        Get details of feed
+
+    delete:
+
+        Delete feed
+    """
     serializer_class = FeedSerializers
     model = Feed
 
@@ -277,6 +318,15 @@ class FeedRetrieveView(retrieve.RetrieveView):
 @decorators.authentication_classes([JSONWebTokenAuthentication])
 @decorators.permission_classes([IsAuthenticated])
 class FeedFavoriteView(generics.GenericAPIView):
+    """
+    post:
+
+        add feed to favorites
+
+    delete:
+
+        remove feed from favorites
+    """
     serializer_class = serializers.Serializer
     model = Feed
 
@@ -305,13 +355,13 @@ class FeedListOfMyFavoritesView(generics.ListAPIView):
 
         Get list of my favorite feeds
 
-        pagination with index and size
+            pagination with index and size
 
-        /?index=0&size=20
+            /?index=0&size=20
 
-        filter
+            filter
 
-            search  search on title and description
+                search  search on title and description
 
     """
     serializer_class = FeedSerializers
@@ -365,6 +415,15 @@ class CommentView(delete.DeleteView, update.UpdateView):
 
          update comment by creator
 
+            body min 2, max 500
+
+    patch:
+
+         update comment by creator
+
+            body min 2, max 500
+
+
     """
     serializer_class = CommentSerializer
     model = Comment
@@ -376,17 +435,17 @@ class CommentListFeedView(generics.ListAPIView):
     """
     get:
 
-        Get list of my favorite feeds
+        Get list of comments on feed
 
-        pagination with index and size
+            pagination with index and size
 
-        /?index=0&size=20
+            /?index=0&size=20
 
-        order_by
+            order_by
 
-            OLDEST
+                OLDEST
 
-            NEWEST default
+                NEWEST default
 
     """
     serializer_class = CommentSerializer

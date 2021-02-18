@@ -1,11 +1,9 @@
-from celery import shared_task  # , Celery
+from celery import shared_task
 from feedio.celery import app
 from requests.exceptions import RequestException
 
 from feed.models import Rss, Feed
 from scrapper.scraping import scrap_rss
-
-# app = Celery()  # TODO
 
 
 @app.task(autoretry_for=(RequestException,), retry_kwargs={'max_retries': 3, 'countdown': 5}, retry_backoff=True)

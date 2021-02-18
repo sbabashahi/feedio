@@ -39,5 +39,5 @@ EMAIL_USE_SSL = True
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ORIGIN_WHITELIST = (
-    'localhost:8000',
+    'localhost:8008',
 )

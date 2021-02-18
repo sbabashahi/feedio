@@ -7,7 +7,6 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
 from authnz import serializers as authnz_serializers
 from authnz.models import User, email_activation_token
-
 from utils import responses, exceptions as authnz_exceptions, permissions, utils
 from utils.tools import retrieve, update
 
@@ -168,18 +167,18 @@ class UserMyProfileView(retrieve.RetrieveView, update.UpdateView):
 
         update profile
 
-        first_name string min 5, max 50 allow blank for remove optional
+            first_name string min 5, max 50 allow blank for remove optional
 
-        last_name string min 5, max 50  allow blank for remove optional
+            last_name string min 5, max 50  allow blank for remove optional
 
 
     patch:
 
         update profile
 
-        first_name string min 5, max 50 allow blank for remove optional
+            first_name string min 5, max 50 allow blank for remove optional
 
-        last_name string min 5, max 50  allow blank for remove optional
+            last_name string min 5, max 50  allow blank for remove optional
 
     """
     serializer_class = authnz_serializers.MyProfileSerializer

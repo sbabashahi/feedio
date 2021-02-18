@@ -16,7 +16,9 @@ class UpdateView(generics.UpdateAPIView):
             if serialized_data.is_valid(raise_exception=True):
                 self.perform_update(serialized_data)
                 return responses.SuccessResponse(serialized_data.data).send()
-        except (exceptions.CustomException, ValidationError, self.model.DoesNotExist) as e:
+        except self.model.DoesNotExist as e:
+            return responses.ErrorResponse(message=ugettext('Does not exist.'), status=400).send()
+        except (exceptions.CustomException, ValidationError) as e:
                 return responses.ErrorResponse(message=e.detail, status=e.status_code).send()
 
     def patch(self, request, id=None):  # just send parameters you want to update, don't need all of them

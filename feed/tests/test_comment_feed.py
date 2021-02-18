@@ -1,10 +1,8 @@
-import requests
 from django.test import TestCase
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 
 from authnz.models import User
 from feed.models import Feed, Rss
-from utils.tasks import check_rss_every_hour
 
 
 mock = Mock()
@@ -15,6 +13,10 @@ class RssTestCase(TestCase):
 
     @classmethod
     def setUpClass(cls):
+        """
+        Create user, rss and feed for tests
+        :return:
+        """
         super().setUpClass()
         data = {
             'email': 'saeed@test.com',
@@ -46,8 +48,9 @@ class RssTestCase(TestCase):
         feed.save()
 
     def test_feed(self):
+        # test feed model
         self.assertEqual(Feed.objects.count(), 1, 'Wrong feed count.')
-
+        # test feed list API
         resp = self.client.get('/feed/feed_list/', **self.header)
         self.assertEqual(resp.status_code, 200, 'Wrong status code.')
         data = resp.json()
@@ -55,7 +58,7 @@ class RssTestCase(TestCase):
         self.assertEqual(data['total'], 1, 'Wrong total feed.')
         self.assertEqual(data['data'][0]['title'], Feed.objects.first().title, 'Wrong feed title.')
         self.assertEqual(data['data'][0]['rss']['title'], Rss.objects.first().title, 'Wrong feed title.')
-
+        # test favorite feed API
         resp = self.client.post('/feed/favorite_feed/{}/'.format(data['data'][0]['id']), **self.header)
         self.assertEqual(resp.status_code, 201, 'Wrong status type.')
 
@@ -63,7 +66,7 @@ class RssTestCase(TestCase):
         data = resp.json()
         self.assertEqual(data['total'], 1, 'Wrong total feed.')
         self.assertEqual(data['data'][0]['id'], Feed.objects.first().id, 'Wrong feed id.')
-
+        # test remove favorite feed
         resp = self.client.delete('/feed/favorite_feed/{}/'.format(data['data'][0]['id']), **self.header)
         self.assertEqual(resp.status_code, 204, 'Wrong status type.')
 
@@ -72,6 +75,7 @@ class RssTestCase(TestCase):
         self.assertEqual(data['total'], 0, 'Wrong total feed.')
 
     def test_comment(self):
+        # test comment API
         data = {
             'body': 'Body of comment',
             'feed': {

@@ -16,7 +16,7 @@ class CreateView(generics.CreateAPIView):
                 self.perform_create(serialize_data)
                 return responses.SuccessResponse(serialize_data.data, status=201).send()
         except IntegrityError as e:
-            return responses.ErrorResponse(message=ugettext('DB Integrity Error in creation '),
+            return responses.ErrorResponse(message=ugettext('DB Integrity Error in creation.'),
                                            dev_error=str(e), status=409).send()
         except (CustomException, ValidationError) as e:
             return responses.ErrorResponse(message=e.detail, status=e.status_code).send()

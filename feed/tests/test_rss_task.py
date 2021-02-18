@@ -1,4 +1,3 @@
-import requests
 from django.test import TestCase
 from unittest.mock import Mock, patch
 
@@ -15,6 +14,10 @@ class RssTestCase(TestCase):
 
     @classmethod
     def setUpClass(cls):
+        """
+        Create user for tests
+        :return:
+        """
         super().setUpClass()
         data = {
             'email': 'saeed@test.com',
@@ -29,6 +32,10 @@ class RssTestCase(TestCase):
         cls.header = {'HTTP_AUTHORIZATION': f'JWT {user.generate_token()}'}
 
     def test_create_rss(self):
+        """
+        Test rss create API with patching celery task check_new_rss
+        :return:
+        """
         with patch('utils.tasks.check_new_rss'):
             data = {
                 'title': 'Varzesh3',
@@ -45,6 +52,10 @@ class RssTestCase(TestCase):
             self.assertEqual(Rss.objects.count(), 2, 'Wrong number of rss')
 
     def test_task_rss(self):
+        """
+        Test check_rss_every_hour task with mocking scrap_rss function
+        :return:
+        """
 
         def scrap(link, time):
             data = {
@@ -72,8 +83,7 @@ class RssTestCase(TestCase):
         rss_zoomit = Rss(**data_zoomit)
         rss_zoomit.save()
         with patch('utils.tasks.check_rss_every_hour.retry', side_effect=check_rss_every_hour):
-            with patch('utils.tasks.check_rss_every_hour.retry', side_effect=check_rss_every_hour):
-                with patch('utils.tasks.scrap_rss', side_effect=scrap):
-                    check_rss_every_hour()
-                    self.assertEqual(Feed.objects.count(), 1, 'Wrong number of feeds')
+            with patch('utils.tasks.scrap_rss', side_effect=scrap):
+                check_rss_every_hour()
+                self.assertEqual(Feed.objects.count(), 1, 'Wrong number of feeds')
 

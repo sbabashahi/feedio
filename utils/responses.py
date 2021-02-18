@@ -1,11 +1,8 @@
-"""
-main response handler, some of response handel throw  middleware
-"""
-import time
 import json
+import time
 
-from django.http import HttpResponse
 from django.conf import settings
+from django.http import HttpResponse
 
 
 class BaseResponse:

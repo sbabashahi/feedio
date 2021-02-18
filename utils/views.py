@@ -14,15 +14,15 @@ class CreateDataTestView(generics.CreateAPIView):
 
         Create data test
 
-        admin user
+            admin user
 
-            admin@admin.com     feedio2021
+                admin@admin.com     feedio2021
 
-        and Rss
+            and Rss
 
-            https://www.varzesh3.com/rss/all
+                https://www.varzesh3.com/rss/all
 
-            https://www.isna.ir/rss
+                https://www.isna.ir/rss
 
     """
     serializer_class = serializers.Serializer
